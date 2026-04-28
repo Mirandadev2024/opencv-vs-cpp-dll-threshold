@@ -4,19 +4,19 @@ import ctypes
 import time
 from ctypes import c_uint8, c_int, POINTER
 
-# carrega a DLL
+# loads DLL
 mylib = ctypes.CDLL("./opencvdll.dll")
 
-# lê a imagem
+# read image
 img = cv.imread("sunflower.jpg")
 
 # converte para escala de cinza
 img_gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
 
-# garante memória contígua
+# assures contiguous memory
 img_gray = np.ascontiguousarray(img_gray)
 
-# especificação da função da DLL
+# DLL specifications
 mylib.threshold_custom.argtypes = [
     POINTER(c_uint8),  # unsigned char* img
     c_int,             # int rows
@@ -27,7 +27,7 @@ mylib.threshold_custom.restype = None  # void
 
 start = time.perf_counter()
 
-# chama a função C++
+# calls C++ function
 mylib.threshold_custom(
     img_gray.ctypes.data_as(POINTER(c_uint8)),
     img_gray.shape[0],
@@ -37,10 +37,10 @@ mylib.threshold_custom(
 
 end = time.perf_counter()
 
-print(f"Tempo: {(end-start)*1000:.3f}ms")
+print(f"Time: {(end-start)*1000:.3f}ms")
 
-# mostra o resultado
-cv.imshow("resultado", img_gray)
+# shows result
+cv.imshow("result", img_gray)
 
 cv.imwrite("sunflower_threshold.png", img_gray)
 
